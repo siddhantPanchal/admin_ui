@@ -49,7 +49,7 @@ export default function EmployeeList({
           placeholder="Search Employee"
           onChange={(e) => {
             const filterKey = e.target.value.trim().toLowerCase();
-            if (!filterKey) return;
+            // if (!filterKey) return;
 
             // setSearch(filterKey);
             handleSearch(filterKey);
