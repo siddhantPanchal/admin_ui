@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from "react";
 import employeeService from "../../services/employee_service";
+import getPaginationDetails from "../../services/pagination_services";
 
-export default function Footer({ setEmployees, selectedEmployees }) {
+export default function Footer({
+  setEmployees,
+  selectedEmployees,
+  pages,
+  setPages,
+  onPageChanged,
+}) {
   // pagination
   const [currentPage, setCurrentPage] = useState(0);
-  const [pages, setPages] = useState(0);
-
   const maxEmpoyeesOnSamePage = 10;
 
   // set employees who should present on current page
   function pagination(employees) {
-    setPages(Math.ceil(employees.length / maxEmpoyeesOnSamePage));
-    const start = currentPage * maxEmpoyeesOnSamePage;
-    const end = start + maxEmpoyeesOnSamePage;
-    let pagedEmployees = [];
-    if (end > employees.length) {
-      pagedEmployees = employees.slice(start);
-    } else {
-      pagedEmployees = employees.slice(start, end);
-    }
+    const { pagedEmployees, pages } = getPaginationDetails(
+      employees,
+      maxEmpoyeesOnSamePage,
+      currentPage
+    );
+    setPages(pages);
     setEmployees(pagedEmployees);
   }
 
@@ -51,9 +53,7 @@ export default function Footer({ setEmployees, selectedEmployees }) {
 
   // if current page get changed then set the current page employees
   useEffect(() => {
-    employeeService.getEmployees().then((value) => {
-      pagination(value);
-    });
+    onPageChanged(currentPage);
   }, [currentPage]);
 
   return (
@@ -62,14 +62,12 @@ export default function Footer({ setEmployees, selectedEmployees }) {
         {/* Delete All Button */}
         <button
           className="flex-shrink-0 p-4 h-10 rounded-full bg-red-400 inline-flex items-center justify-center text-white relative z-10 mb-4 sm:mb-0"
-          onClick={() => {
+          onClick={async () => {
             console.log(selectedEmployees);
             for (const emp of selectedEmployees) {
               employeeService.deleteEmployee(emp);
             }
-            employeeService.getEmployees().then((value) => {
-              pagination(value);
-            });
+            pagination(await employeeService.getEmployees());
           }}
         >
           <p className="text-white">Delete Selected</p>

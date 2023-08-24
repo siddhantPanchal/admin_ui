@@ -21,9 +21,12 @@ export default function EmployeeList({
   employees,
   handleDeletion,
   handleSelected,
+  handleSearch,
 }) {
   const [selectAll, setSelectAll] = useState(false);
   const [selectEmployees, setSelectedEmployees] = useState([]);
+
+  // const [search, setSearch] = useState("");
 
   // when employee get selected
   useEffect(() => {
@@ -37,6 +40,23 @@ export default function EmployeeList({
 
   return (
     <div className="">
+      <div className="flex flex-col items-center">
+        <input
+          className="container rounded-lg placeholder:px-4 px-4 py-2  my-2 border border-gray-700"
+          type="search"
+          name="search"
+          id="search"
+          placeholder="Search Employee"
+          onChange={(e) => {
+            const filterKey = e.target.value.trim().toLowerCase();
+            if (!filterKey) return;
+
+            // setSearch(filterKey);
+            handleSearch(filterKey);
+          }}
+        />
+      </div>
+
       <div className="flex flex-row ml-4 sm:grid sm:grid-cols-5 gap-4 mb-4 items-center">
         {/* input select all employees */}
         <label htmlFor="selectAll" aria-disabled hidden>
